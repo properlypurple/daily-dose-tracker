@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Medication } from '@/utils/supabase';
+import type { Medication } from '@/types/medication';
 import { Button } from '@/components/ui/button';
 import { Clock, Check, AlertTriangle } from 'lucide-react';
 import { isWithinTimeRange, recordDose } from '@/utils/medicationUtils';

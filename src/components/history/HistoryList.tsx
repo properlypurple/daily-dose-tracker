@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Pill, Trash2, PlusCircle } from 'lucide-react';
-import { MedicationDose, Medication } from '@/utils/supabase';
+import type { MedicationDose, Medication } from '@/types/medication';
 import { deleteDose, addManualDose } from '@/utils/medicationUtils';
 import {
   Dialog,

@@ -1,19 +1,19 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getUser } from '@/utils/authUtils';
+import { getMedications } from '@/utils/medicationUtils';
+import type { Medication } from '@/types/medication';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import MedicationCard from '@/components/medications/MedicationCard';
 import AddMedicationForm from '@/components/medications/AddMedicationForm';
-import { Medication } from '@/utils/supabase';
-import { getMedications } from '@/utils/medicationUtils';
-import { getUser } from '@/utils/authUtils';
-import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const navigate = useNavigate();
 
   const fetchMedications = async () => {
     if (!userId) return;

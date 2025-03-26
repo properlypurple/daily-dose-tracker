@@ -1,72 +1,62 @@
-
-import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-import HistoryList from '@/components/history/HistoryList';
-import { MedicationDose, Medication } from '@/utils/supabase';
-import { getAllDoses, getMedications } from '@/utils/medicationUtils';
+// Update History.tsx imports
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getUser } from '@/utils/authUtils';
-import { toast } from 'sonner';
+import { getAllDoses, getMedications } from '@/utils/medicationUtils';
+import type { Medication, MedicationDose } from '@/types/medication';
+import HistoryList from '@/components/history/HistoryList';
 
-const History: React.FC = () => {
-  const [doses, setDoses] = useState<(MedicationDose & { medication: Medication })[]>([]);
-  const [medications, setMedications] = useState<Medication[]>([]);
+const History = () => {
+  const [user, setUser] = useState(null);
+  const [doses, setDoses] = useState([]);
+  const [medications, setMedications] = useState([]);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    if (!userId) return;
-    
-    setIsLoading(true);
-    try {
-      const [dosesData, medsData] = await Promise.all([
-        getAllDoses(userId),
-        getMedications(userId)
-      ]);
-      
-      setDoses(dosesData);
-      setMedications(medsData);
-    } catch (error) {
-      toast.error('Failed to load history');
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getUser();
-      if (user) {
-        setUserId(user.id);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const userData = await getUser();
+        if (!userData) {
+          navigate('/login');
+          return;
+        }
+
+        setUser(userData);
+
+        const dosesData = await getAllDoses(userData.id);
+        setDoses(dosesData);
+
+        const medicationsData = await getMedications(userData.id);
+        setMedications(medicationsData);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchUser();
-  }, []);
+    fetchData();
+  }, [navigate]);
 
-  useEffect(() => {
-    if (userId) {
-      fetchData();
+  const handleDoseChange = async () => {
+    if (user) {
+      const dosesData = await getAllDoses(user.id);
+      setDoses(dosesData);
     }
-  }, [userId]);
+  };
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading history...</p>
-      </div>
-    );
+    return <div className="text-center py-12">Loading history...</div>;
   }
 
   return (
-    <div className="space-y-6">
-      {userId && (
-        <HistoryList 
-          doses={doses} 
+    <div className="container mx-auto p-8">
+      {user && (
+        <HistoryList
+          doses={doses}
           medications={medications}
-          userId={userId}
-          onDoseChange={fetchData}
+          userId={user.id}
+          onDoseChange={handleDoseChange}
         />
       )}
     </div>

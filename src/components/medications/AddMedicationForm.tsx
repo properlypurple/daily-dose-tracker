@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, X } from 'lucide-react';
 import { addMedication } from '@/utils/medicationUtils';
-import { Medication } from '@/utils/supabase';
+import type { Medication } from '@/types/medication';
 import { toast } from 'sonner';
 
 interface AddMedicationFormProps {
@@ -39,7 +39,9 @@ const AddMedicationForm: React.FC<AddMedicationFormProps> = ({ userId, onSuccess
         dosage,
         start_time: startTime,
         end_time: endTime,
-        color,
+        frequency: 'daily', // Adding required frequency field
+        instructions: '', // Adding optional instructions field
+        color: color, // This is handled in the medicationUtils.ts as a custom property
       });
       
       if (newMedication) {

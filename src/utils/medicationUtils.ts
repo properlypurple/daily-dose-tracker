@@ -25,16 +25,22 @@ export const getMedications = async (userId: string): Promise<Medication[]> => {
 // Add a new medication
 export const addMedication = async (medication: Omit<Medication, 'id' | 'created_at' | 'updated_at'>): Promise<Medication | null> => {
   try {
+    // Clone the medication and remove color since it's not a database column
+    const { color, ...medicationData } = medication as any;
+    
     const { data, error } = await supabase
       .from('medications')
-      .insert(medication)
+      .insert(medicationData)
       .select()
       .single();
     
     if (error) throw error;
     
+    // Add the color back for the UI
+    const result = { ...data, color } as Medication;
+    
     toast.success(`Added ${medication.name}`);
-    return data as Medication;
+    return result;
   } catch (error) {
     handleError(error, 'Failed to add medication');
     return null;
