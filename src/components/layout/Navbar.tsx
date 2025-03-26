@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Pill, History, Users, LogOut, Menu, X } from 'lucide-react';
 import { logoutUser, getUser } from '@/utils/authUtils';
 import { cn } from '@/lib/utils';
+import ThemeToggle from '@/components/theme/ThemeToggle';
 
 type User = {
   id: string;
@@ -71,7 +72,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b">
+    <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-background/80 backdrop-blur-md border-b">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/dashboard" className="flex items-center gap-2">
@@ -81,16 +82,19 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile menu button */}
-        <button 
-          className="block md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button 
+            className="block"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
 
         {/* Desktop menu */}
         <nav className="hidden md:flex items-center gap-6">
@@ -109,6 +113,7 @@ const Navbar: React.FC = () => {
               {item.label}
             </Link>
           ))}
+          <ThemeToggle />
           <Button 
             variant="ghost" 
             size="sm" 
@@ -122,7 +127,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-md border-b shadow-lg md:hidden animate-in slide-in">
+          <div className="absolute top-16 left-0 right-0 bg-white/95 dark:bg-background/95 backdrop-blur-md border-b shadow-lg md:hidden animate-in slide-in">
             <nav className="flex flex-col p-4 space-y-3">
               {filteredMenuItems.map((item) => (
                 <Link
