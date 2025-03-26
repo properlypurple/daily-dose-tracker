@@ -1,6 +1,8 @@
 
-import { supabase, Medication, MedicationDose, handleError } from './supabase';
+import { supabase } from '@/integrations/supabase/client';
+import type { Medication, MedicationDose } from '@/types/medication';
 import { toast } from 'sonner';
+import { handleError } from './authUtils';
 
 // Get all medications for current user
 export const getMedications = async (userId: string): Promise<Medication[]> => {
@@ -21,7 +23,7 @@ export const getMedications = async (userId: string): Promise<Medication[]> => {
 };
 
 // Add a new medication
-export const addMedication = async (medication: Omit<Medication, 'id' | 'created_at'>): Promise<Medication | null> => {
+export const addMedication = async (medication: Omit<Medication, 'id' | 'created_at' | 'updated_at'>): Promise<Medication | null> => {
   try {
     const { data, error } = await supabase
       .from('medications')
@@ -99,7 +101,7 @@ export const recordDose = async (medicationId: string, userId: string): Promise<
     const now = new Date().toISOString();
     
     const { data, error } = await supabase
-      .from('medication_doses')
+      .from('doses') // Changed from medication_doses to doses based on Supabase schema
       .insert({
         medication_id: medicationId,
         user_id: userId,
@@ -122,7 +124,7 @@ export const recordDose = async (medicationId: string, userId: string): Promise<
 export const getMedicationDoses = async (medicationId: string, userId: string): Promise<MedicationDose[]> => {
   try {
     const { data, error } = await supabase
-      .from('medication_doses')
+      .from('doses')
       .select('*')
       .eq('medication_id', medicationId)
       .eq('user_id', userId)
@@ -141,7 +143,7 @@ export const getMedicationDoses = async (medicationId: string, userId: string): 
 export const getAllDoses = async (userId: string): Promise<(MedicationDose & { medication: Medication })[]> => {
   try {
     const { data, error } = await supabase
-      .from('medication_doses')
+      .from('doses')
       .select(`
         *,
         medication:medications(*)
@@ -162,7 +164,7 @@ export const getAllDoses = async (userId: string): Promise<(MedicationDose & { m
 export const deleteDose = async (doseId: string): Promise<boolean> => {
   try {
     const { error } = await supabase
-      .from('medication_doses')
+      .from('doses')
       .delete()
       .eq('id', doseId);
     
@@ -180,7 +182,7 @@ export const deleteDose = async (doseId: string): Promise<boolean> => {
 export const addManualDose = async (medicationId: string, userId: string, takenAt: string): Promise<MedicationDose | null> => {
   try {
     const { data, error } = await supabase
-      .from('medication_doses')
+      .from('doses')
       .insert({
         medication_id: medicationId,
         user_id: userId,

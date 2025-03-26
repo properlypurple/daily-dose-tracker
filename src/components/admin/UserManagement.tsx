@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { updateUserRole, deleteUser } from '@/utils/authUtils';
-import { User } from '@/types/auth';
+import type { User } from '@/types/auth';
 import { Loader2, UserPlus, UserMinus, Shield, ShieldAlert } from 'lucide-react';
-import { supabase } from '@/utils/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import RegisterForm from '../auth/RegisterForm';
 
@@ -17,13 +17,25 @@ const UserManagement: React.FC = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
       
-      setUsers(data as User[]);
+      // Convert profile data to User type
+      const usersData = await Promise.all(data.map(async (profile) => {
+        // Get email from auth if available
+        const { data: authData } = await supabase.auth.admin.getUserById(profile.id);
+        return {
+          id: profile.id,
+          email: authData?.user?.email || 'No email',
+          role: profile.role,
+          created_at: profile.created_at
+        } as User;
+      }));
+      
+      setUsers(usersData);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to fetch users');

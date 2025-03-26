@@ -1,6 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
-import { User } from '@/types/auth';
+import type { User } from '@/types/auth';
 import { toast } from 'sonner';
 
 const supabaseUrl = 'https://uobiniyocextyhtfrvfi.supabase.co';
@@ -12,8 +12,6 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     autoRefreshToken: true,
   }
 });
-
-export { User };
 
 // Handle errors
 export const handleError = (error: any, fallbackMessage: string = 'An error occurred') => {

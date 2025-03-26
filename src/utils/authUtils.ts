@@ -1,9 +1,9 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { User } from '@/types/auth';
+import type { User } from '@/types/auth';
 
-export { User };
+export type { User };
 
 // Handle errors
 export const handleError = (error: any, fallbackMessage: string = 'An error occurred') => {
@@ -19,16 +19,22 @@ export const getUser = async (): Promise<User | null> => {
     
     if (!user) return null;
     
-    // Get user profile from users table including role
+    // Get user profile from profiles table including role
     const { data, error } = await supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
     
     if (error) throw error;
     
-    return data as User;
+    // Create a User object from the profile data
+    return {
+      id: data.id,
+      email: user.email || '',
+      role: data.role,
+      created_at: data.created_at
+    } as User;
   } catch (error) {
     handleError(error, 'Failed to get user data');
     return null;
@@ -83,12 +89,11 @@ export const registerUser = async (email: string, password: string, role: 'admin
     
     if (error) throw error;
     
-    // Insert user into users table with role
+    // Insert user into profiles table with role
     const { error: profileError } = await supabase
-      .from('users')
+      .from('profiles')
       .insert({
         id: data.user.id,
-        email,
         role,
       });
     
@@ -118,7 +123,7 @@ export const updateUserRole = async (userId: string, role: 'admin' | 'user') => 
     }
     
     const { error } = await supabase
-      .from('users')
+      .from('profiles')
       .update({ role })
       .eq('id', userId);
     
