@@ -113,6 +113,6 @@
   }
   
   .card-animation {
-    @apply animate-in fade-in slide-in;
+    @apply animate-in fade-in;
   }
 }

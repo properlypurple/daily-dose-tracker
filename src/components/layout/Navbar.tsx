@@ -2,9 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Pills, History, Users, LogOut, Menu, X } from 'lucide-react';
-import { logoutUser, getUser, User } from '@/utils/authUtils';
+import { Pill, History, Users, LogOut, Menu, X } from 'lucide-react';
+import { logoutUser, getUser } from '@/utils/authUtils';
 import { cn } from '@/lib/utils';
+
+type User = {
+  id: string;
+  email: string;
+  role: string;
+};
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,7 +40,7 @@ const Navbar: React.FC = () => {
     {
       path: '/dashboard',
       label: 'Medications',
-      icon: <Pills className="mr-2 h-4 w-4" />,
+      icon: <Pill className="mr-2 h-4 w-4" />,
       showFor: ['admin', 'user'],
     },
     {
@@ -69,7 +75,7 @@ const Navbar: React.FC = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <Pills className="h-6 w-6 text-primary" />
+            <Pill className="h-6 w-6 text-primary" />
             <span className="font-semibold text-lg">MedTracker</span>
           </Link>
         </div>
