@@ -10,6 +10,7 @@ export type Medication = {
   instructions?: string;
   created_at: string;
   updated_at: string;
+  color?: string; // Adding the color property as optional
 };
 
 export type MedicationDose = {

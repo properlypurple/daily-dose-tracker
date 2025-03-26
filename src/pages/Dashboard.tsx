@@ -1,12 +1,14 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '@/utils/authUtils';
 import { getMedications } from '@/utils/medicationUtils';
 import type { Medication } from '@/types/medication';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react'; // Added Loader2 import
 import MedicationCard from '@/components/medications/MedicationCard';
 import AddMedicationForm from '@/components/medications/AddMedicationForm';
+import { toast } from 'sonner'; // Added toast import
 
 const Dashboard: React.FC = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
