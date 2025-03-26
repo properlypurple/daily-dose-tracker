@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, updateUserRole, deleteUser } from '@/utils/authUtils';
+import { updateUserRole, deleteUser } from '@/utils/authUtils';
+import { User } from '@/types/auth';
 import { Loader2, UserPlus, UserMinus, Shield, ShieldAlert } from 'lucide-react';
 import { supabase } from '@/utils/supabase';
 import { toast } from 'sonner';

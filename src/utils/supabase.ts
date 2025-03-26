@@ -1,49 +1,23 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { User } from '@/types/auth';
 import { toast } from 'sonner';
 
-// Initialize the Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = 'https://uobiniyocextyhtfrvfi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYmluaXlvY2V4dHlodGZydmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NDQ4NjEsImV4cCI6MjA1ODUyMDg2MX0.bys-HmQr4CcevCFGPjiAwjUDD0IHMPKPFq5UM4XqsYg';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
-}
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export { User };
 
-// Type definitions
-export type User = {
-  id: string;
-  email: string;
-  role: 'admin' | 'user';
-  created_at: string;
-};
-
-export type Medication = {
-  id: string;
-  user_id: string;
-  name: string;
-  dosage: string;
-  start_time: string; // HH:MM format
-  end_time: string; // HH:MM format
-  color: string;
-  created_at: string;
-};
-
-export type MedicationDose = {
-  id: string;
-  medication_id: string;
-  user_id: string;
-  taken_at: string;
-  created_at: string;
-};
-
-// Error handling helper
-export const handleError = (error: Error | unknown, message = 'An error occurred') => {
-  console.error(error);
+// Handle errors
+export const handleError = (error: any, fallbackMessage: string = 'An error occurred') => {
+  console.error('Error:', error);
+  const message = error?.message || fallbackMessage;
   toast.error(message);
-  return null;
 };
-
-export default supabase;

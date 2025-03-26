@@ -1,6 +1,16 @@
 
-import { supabase, User, handleError } from './supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { User } from '@/types/auth';
+
+export { User };
+
+// Handle errors
+export const handleError = (error: any, fallbackMessage: string = 'An error occurred') => {
+  console.error('Error:', error);
+  const message = error?.message || fallbackMessage;
+  toast.error(message);
+};
 
 // Check if user is authenticated
 export const getUser = async (): Promise<User | null> => {
